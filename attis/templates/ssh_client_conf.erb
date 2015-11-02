@@ -1,0 +1,8 @@
+#<%= @template_header %>
+Host gitserver
+     Hostname <%= @param['git']['ssh']['gitserver'] %>
+     User <%= @param['git']['ssh']['user'] %>
+     Port 22
+     IdentityFile <%= @param['git']['ssh']['config_dir'] + '/' + @param['git']['ssh']['rsa_keyfile'] %>
+     StrictHostKeyChecking no
+     UserKnownHostsFile=/dev/null

@@ -1,0 +1,18 @@
+#<%= @template_header %>
+IPADDR="<%= @cle['ip'] %>"
+NETMASK="<%= @cle['subnet']['mask'] %>"
+DEVICE="<%= @dvname %>"
+NAME="<%= @dvname %>-staticon"
+HWADDR="<%= @cle["mac"] %>"
+GATEWAY="<%= @cle['subnet']['gateway'] %>"
+BOOTPROTO=none
+ONBOOT=yes
+PEERDNS=no
+<%- if @cle['primary'] then -%>
+PEERROUTES=yes
+<%- else -%>
+PEERROUTES=no
+<% end -%>
+NM_CONTROLLED=no
+USERCTL=no
+TYPE=Ethernet

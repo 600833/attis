@@ -1,0 +1,27 @@
+{
+  "version": "0.1.5",
+  "author": "Matthias Saou",
+  "types": [
+
+  ],
+  "checksums": {
+    "templates/smb.conf.erb": "634fb946f830c303def3a61d00f49783",
+    "templates/smb.conf.orig": "f359826da1ec75890b41b9446ae52a0f",
+    "Modulefile": "0899c639e73a1a2dab6179dc1cf68cf9",
+    "manifests/params.pp": "af03c659d207be87c64726d1ff6f5dd1",
+    "manifests/server.pp": "493306a788fab59baae9e6252f539d8e",
+    "LICENSE": "63f96c99cc44c3d16af914ff2568e0a4",
+    "README.md": "7502b440db3cb0b9bf2cb1caf00e65e9",
+    "ChangeLog": "b38a3a35edf25c75f39b59f868d8e1b3",
+    "tests/server.pp": "818da5c340e103a09cd6167055c38f8f"
+  },
+  "source": "git://github.com/thias/puppet-samba",
+  "description": "Install, enable and configure Samba file sharing.",
+  "project_page": "https://github.com/thias/puppet-samba",
+  "summary": "Samba module",
+  "dependencies": [
+
+  ],
+  "name": "thias-samba",
+  "license": "Apache 2.0"
+}

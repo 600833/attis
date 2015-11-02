@@ -1,0 +1,23 @@
+#<%= @template_header %>
+<%
+dm=''
+dns1=""
+dns2=""
+nm=""
+@foreman_interfaces.each.with_index { | v,k|
+	if v['primary'] then
+		dns1 = v['subnet']['dns_primary']
+		dns2 = v['subnet']['dns_secondary']
+		nm = v['name']
+	end	
+}
+dm=nm.sub(/^[\w+i\-]+\./,'')
+-%>
+domain <%= dm %>
+search <%= dm %>
+<% if dns1 then -%>
+nameserver <%= dns1 %>
+<% end -%>
+<% if dns2 then -%>
+nameserver <%= dns2 %>
+<% end -%>

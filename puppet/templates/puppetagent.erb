@@ -1,0 +1,6 @@
+#<%= @template_header %>
+<% if @polling then -%>
+PUPPET_EXTRA_OPTS=''
+<% else -%>
+PUPPET_EXTRA_OPTS='--no-client'
+<% end -%>

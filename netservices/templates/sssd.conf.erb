@@ -1,0 +1,22 @@
+#<%= @template_header %>
+<%
+royaume= @ad_domain.upcase
+lroy= royaume.downcase
+-%>
+[sssd]
+config_file_version=2
+services = nss, pam
+domains = <%= lroy %>
+default_domain_suffix = <%= lroy %>
+[domain/<%= lroy %>]
+ad_server = <%= @dc %>
+ad_domain = <%= lroy %>
+krb5_realm = <%= royaume %>
+id_provider = ad
+auth_provider = ad
+chpass_provider = ad
+access_provider = ad
+ldap_id_mapping = false
+use_fully_qualified_names = false
+cache_credentials = true
+enumerate = true

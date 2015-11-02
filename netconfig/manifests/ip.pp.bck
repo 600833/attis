@@ -1,0 +1,10 @@
+class netconfig::ip {
+        $x = split($interfaces,'[,]')
+        [1,2,3].each |$x11| { notify {"valeur ${x11}":}  }
+	notify{"nic adapter: ${x}":}
+		file { "ifcfg-${$cle}":
+		ensure=> present,
+		path=> "/etc/sysconfig/network-scripts/ifcfg-${cle}.out",
+		content=> template('netconfig/ifcfg.erb'),
+		}
+}

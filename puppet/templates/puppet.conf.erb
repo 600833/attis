@@ -1,0 +1,34 @@
+# <%= @template_header %>
+<%
+interface_name=""
+@foreman_interfaces.each.with_index {| v,k|
+	if v["provision"] then
+		interface_name=v["name"]
+	end
+}
+certname=interface_name.sub(/\.adm\./,".")
+-%>
+[main]
+vardir 		= /var/lib/puppet
+logdir 		= /var/log/puppet
+rundir 		= /var/run/puppet
+ssldir 		= $vardir/ssl
+parser          = future
+ordering        = manifest
+stringify_facts = false
+classfile 	= /etc/puppet/classes.txt
+
+[agent]
+listen          = <%= @listen %>
+pluginsync      = true
+report          = true
+ignoreschedules = false
+daemon          = false
+ca_server       = <%=@puppet_ca %>
+certname        = <%=certname %>
+dns_alt_names   = <%=interface_name %>
+environment     = <%=@environment %>
+server          = <%=@puppetmaster %>
+runinterval     = <%=@runinterval %>
+node_name       = facter
+node_name_fact  = fqdn

@@ -1,0 +1,8 @@
+name 'thias-firewalld'
+version '0.1.5'
+source 'git://github.com/thias/puppet-firewalld'
+author 'Victor LI'
+license 'Apache 2.0'
+summary 'Samba module'
+description "Install, enable and configure Samba file sharing."
+project_page 'https://github.com/thias/puppet-firewalld'

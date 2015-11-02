@@ -1,0 +1,14 @@
+class attis::install_maven ( $stage ='main')
+inherits attis
+{
+	notify {"install_maven": message=> "install_maven fin", }
+	class {'attis::git::init':
+		stage=> $attis::install_maven::stage
+	}
+	attis::git::clone {$param['git']['clones'][0]['name']:
+		repo_name=> $param['git']['clones'][0]['name'],
+		branch_name=> master,
+		repo_path=> $param['git']['clones'][0]['git_path'],
+		install_dir=> $param['git']['clones'][0]['install_dir']
+	}
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DO NOT EDIT LOCALLY, CHANGE PARAMETERS ON THE PUPPET MASTER -->
+<zone target="ACCEPT">
+  <short><%= @projet_prefix %>_<%= @zone2 %> </short>
+  <description>All network connections are accepted.</description>
+  <% @zone2_source_list.each do | src | -%>
+  <source address="<%= src -%>"/>
+  <% end -%>
+</zone>

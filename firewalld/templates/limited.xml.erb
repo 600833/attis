@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DO NOT EDIT LOCALLY, CHANGE PARAMETERS ON THE PUPPET MASTER -->
+<zone>
+  <short><%= @projet_prefix %>_<%= @zone3 %></short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+<% @zone3_source_list.each do |src| -%>
+ <source address="<%= src -%>"/>
+<% end -%>
+
+<% @zone3_service_list.each do |srv| -%>
+  <service name="<%= srv -%>"/>
+<% end -%>
+</zone>

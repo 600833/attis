@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <%= @template_header %> -->
+<service>
+  <short><%= @sv %></short>
+  <description>service definition for <%= @sv %></description>
+<% @fwservices2[@sv].each { |v|  -%>
+  <port protocol="<%= v['proto'] %>" port="<%= v['port'] %>"/>
+<% } -%>
+</service>

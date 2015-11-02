@@ -1,0 +1,34 @@
+#<%= @template_header %>
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+#
+# See journald.conf(5) for details
+
+[Journal]
+Storage=persistent
+Compress=yes
+Seal=no
+SplitMode=login
+#SyncIntervalSec=5m
+#RateLimitInterval=30s
+#RateLimitBurst=1000
+SystemMaxUse=50M
+#SystemKeepFree=
+SystemMaxFileSize=10M
+RuntimeMaxUse=50M
+#RuntimeKeepFree=
+RuntimeMaxFileSize=10M
+MaxRetentionSec=1month
+#MaxFileSec=1month
+ForwardToSyslog=yes
+ForwardToKMsg=yes
+ForwardToConsole=yes
+TTYPath=/dev/tty3
+MaxLevelStore=debug
+MaxLevelSyslog=debug
+MaxLevelKMsg=debug
+MaxLevelConsole=debug

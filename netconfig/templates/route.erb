@@ -1,0 +1,12 @@
+#<%= @template_header %>
+<%- 
+v=@adm_routes.split(/;/)
+%>
+<%- v.each  { |s| s=s.strip
+if s =~ /\// then
+-%>
+<%= s %> via <%= @cle['subnet']['gateway'] %>
+<% else -%>
+<%= s %>/32 via <%= @cle['subnet']['gateway'] %>
+<% end -%>
+<% } -%>
