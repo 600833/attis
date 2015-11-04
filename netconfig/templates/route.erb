@@ -1,5 +1,6 @@
 #<%= @template_header %>
 <%- 
+if @cle['provision'] then
 v=@adm_routes.split(/;/)
 %>
 <%- v.each  { |s| s=s.strip
@@ -9,4 +10,9 @@ if s =~ /\// then
 <% else -%>
 <%= s %>/32 via <%= @cle['subnet']['gateway'] %>
 <% end -%>
-<% } -%>
+<% } 
+end
+if @use_rt_tables  then
+-%>
+default via <%= @cle['subnet']['gateway'] %> table <%= (@ind+1)*10 %>
+<% end -%>
