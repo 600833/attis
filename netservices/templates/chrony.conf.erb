@@ -1,9 +1,13 @@
 #<%= @template_header %>
 <%
+   if defined? @ntp_server then
+        ntp1=@ntp_server
+   else
 	ntp1=''
 	@foreman_interfaces.each { |v|
 		ntp1 =v['subnet']['gateway'] if v["primary"]
 	}
+   end 
 -%>
 # These servers were defined in the installation:
 <% if ntp1 then -%>

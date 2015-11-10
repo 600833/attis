@@ -1,5 +1,7 @@
-
+<% if defined? @login_banner %>
+<%=  @login_banner %>
+<% else -%>
 ALERT! You are entering into a ISS secured area!
 This service is restricted to authorized users only. All activities on this system are logged.
 Unauthorized access will be fully investigated and reported to law enforcement authorities.
-
+<% end %>
