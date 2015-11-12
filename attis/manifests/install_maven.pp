@@ -33,8 +33,20 @@ inherits attis
 			install_user=> $install_user2,
 			install_group=> $install_group2,
 			auto_update=> str2bool($rpo['auto_update']),
+			}
+		if ( $rpo['name'] == "maven" ) {
+			file { "${rpo['install_dir']}/conf/settings.xml":
+				ensure=> present,
+				owner=> $install_user2,
+				group=> $install_group2,
+				mode=> '0644',
+				content=> template("${module_name}/maven_settings.xml.erb"),
+			}
+
 		}
+		
 	}
+
 #
 #add JAVA_HOME and /bin to PATH
 #
