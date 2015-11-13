@@ -41,6 +41,10 @@ inherits attis
 				group=> $install_group2,
 				mode=> '0644',
 				content=> template("${module_name}/maven_settings.xml.erb"),
+#
+#exec in  attis::git::clone {'maven': ...
+#
+				require=> Exec['clone_maven'],
 			}
 
 		}
