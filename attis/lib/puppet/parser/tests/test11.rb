@@ -4,6 +4,9 @@ require 'faunus'
 #syst='cctv'
 syst='crowd'
 cctv=Faunus::Maven.new(syst,'1.0.1')
+if defined? cctv then
+ File.open("/tmp/#{syst}_1.0.1.obj",'w') {|pf| Marshal.dump(cctv,pf)}
+end
 cctv.bin_dep_list()
 puts "===================================="
 puts cctv.cmd_get

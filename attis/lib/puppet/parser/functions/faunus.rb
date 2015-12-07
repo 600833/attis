@@ -6,7 +6,47 @@ module Faunus
   end
   class Exc_maven_subsys_notfound < Exception
   end
+  class Mavens
+   attr_reader :deplist  
+   def initialize(tsys,vers,artifact)
+    artilist=itemize(artifact)
+    @obj_subsystem=Faunus::Maven.load(tsys,vers)
+    @obj_subsystem.bin_dep_list
+    @obj_collection=Array.new
+    @deplist=Array.new()
+    @client_cmd_list=Array.new()
+    artilist.each do |art|
+     puts art 
+     srv_line,srv_ver=@obj_subsystem.get_version(art)
+     m1=Faunus::Maven.load(tsys,srv_ver,artifact: art)
+     @obj_collection<<m1
+     @deplist<<m1.bin_dep_list(myline: srv_line)
+     @client_cmd_list<<m1.client_cmd_list 
+    end
+     @deplist.flatten!(1).uniq!
+     @client_cmd_list.flatten!(1).uniq!
+   end
+   def itemize(x)
+    raise "arg is not string" unless x.is_a? String
+    y=x.chomp
+    y1=y.split(/[ ;,]+/)
+    return y1
+   end
+  end
   class Maven
+   def self.load(tsys,vers,artifact: 'version-descriptor')
+    basedir='/CONFIG/objectdb'
+    objfile_path=basedir + '/' + tsys + vers + artifact + '.obj'
+    if File.exist? objfile_path then
+     return File.open(objfile_path,'r') {|pf| Marshal.load(pf) }
+    else
+     lobj=Faunus::Maven.new(tsys,vers,artifact: artifact)
+     unless lobj.nil?
+      File.open(objfile_path,'w') {|pf|  Marshal.dump(lobj,pf) }
+     end
+      return lobj
+    end
+   end 
    def initialize (tsys,vers,artifact: 'version-descriptor')
     puts '%%%000'
     puts 'Object constant'
@@ -23,21 +63,23 @@ module Faunus
     puts '%%%000'
     @tobj_name=tsys
     @tobj_version=vers
+    @tobj_artifact=artifact
     @envcmd={"JAVA_HOME"=>"/app/cots/maven/apache-maven-3.3.3/java/jdk1.7.0_75"}
     @mvnbin="/app/cots/maven/apache-maven-3.3.3/bin"
-    cmd_p1="#{@mvnbin}/mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:"
+    @configdir='/CONFIG'
+    cmd_p1="#{@mvnbin}/mvn -B org.apache.maven.plugins:maven-dependency-plugin:2.4:"
     groupid_p1='com.thalesgroup.'
     groupid=groupid_p1 + tsys
     @mave_repo_base='/data/maven_repo'
     @deployer_dir='/app/puppet/install' 
     @conf_install_dir='/data/puppet/install'
     @hiera_dir='/data/puppet/hiera'
-    
     begin
      tf_sys_pom=Tempfile.new('tsys_pom')
      tf_sys_pom.close
      tf_sys_deplist=Tempfile.new('sys_deplist')
      tf_sys_deplist.close
+     @cmd_get_p0=cmd_p1 + "get" + " -Dartifact=" + groupid + ':' + artifact + ':' +  vers + ':'
      @cmd_get_p1=cmd_p1 + "get" + " -Dartifact=" + groupid + ':' + artifact + ':' +  vers + ':' + 'pom' + ' -U' + ' -Ddest='
      @cmd_get=@cmd_get_p1 + tf_sys_pom.path
      runcmd = IO.popen(@envcmd,@cmd_get)
@@ -80,14 +122,14 @@ module Faunus
      end
      install_cmd= case v[2]
       when 'rpm' then 'yum localinstall -y ' + src + ' ; ' +  'cp ' + src + ' .'
-      when 'zip' then 'unzip ' + src
+      when 'zip' then 'unzip -q ' + src
       when 'war' then 'cp ' + src + ' .'
       else 'inconnu'
      end
      v += [src,dst,install_cmd,lnk,lnktarget]
     end
     @deplist<< myline unless myline.empty?
-    @deplist.each { |v| puts v.inspect }
+#   @deplist.each { |v| puts v.inspect }
    end
 
    def deployer_dep_list(conf_dir,puppet_env)
@@ -148,6 +190,16 @@ module Faunus
    def get_cmd_p1
     @cmd_get_p1
    end 
+   def client_cmd_list
+     c1=@deplist.select { |v| v[1] == @tobj_artifact }
+     raise "subsystem #{@tobj_name}, service #{@tobj_artifact}, version #{@tobj_version} unknown: #{c1.inspect}" unless c1.count == 1
+     artifact_type=c1[0][2]
+     @client_cmd_list=[]
+     fl1=%Q(#{@configdir}/#{@tobj_name}_#{@tobj_artifact}_#{@tobj_version})
+     @client_cmd_list << {'cmd'=>%Q(#{@cmd_get_p1}#{fl1}.pom), 'flag'=>%Q(#{fl1}.pom.mvn.dld)}
+     @client_cmd_list << {'cmd'=>%Q(#{@cmd_get_p0}#{artifact_type}), 'flag'=>%Q(#{fl1}.#{artifact_type}.mvn.dld)}
+     @client_cmd_list
+   end
 
    def get_version(tsubsystem)
     ver1=''
