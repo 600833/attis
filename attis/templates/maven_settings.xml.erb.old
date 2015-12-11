@@ -30,14 +30,18 @@ srv1=@param['maven']['nexus_server']
       <repositories>
         <repository>
           <id>releases</id>
-          <url>http://<%= srv1 %>/nexus/content/repositories/<%= @nexus_repo_name %></url>
+          <url>http://<%= srv1 %>/nexus/content/repositories/releases</url>
+        </repository>
+         <repository>
+          <id>shamiya-snapshot</id>
+          <url>http://<%= srv1 %>/nexus/content/repositories/shamiya-snapshot</url>
         </repository>
 
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>releases</id>
-          <url>http://<%= srv1 %>/nexus/content/repositories/<%= @nexus_repo_name %></url>
+          <url>http://<%= srv1 %>/nexus/content/repositories/releases</url>
         </pluginRepository>
       </pluginRepositories>
     </profile>

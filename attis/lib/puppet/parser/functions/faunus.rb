@@ -110,7 +110,7 @@ module Faunus
      m11='thales/' + m11 unless m11 =~ /cots/
      dst='/app/' + m11 + '/' + v[1] + '-' + v[3]
      case v[2]
-     when 'zip' then 
+     when /^(zip|tar.gz|tgz)$/ then 
       lnk= '/app/' + m11 + '/' + v[1]
       lnktarget= dst + '/' + v[1] + '-' + v[3]
      when 'war' then
@@ -123,6 +123,8 @@ module Faunus
      install_cmd= case v[2]
       when 'rpm' then 'yum localinstall -y ' + src + ' ; ' +  'cp ' + src + ' .'
       when 'zip' then 'unzip -q ' + src
+      when 'tgz' then 'tar xzf ' + src
+      when 'tar.gz' then 'tar xzf ' + src
       when 'war' then 'cp ' + src + ' .'
       else 'inconnu'
      end

@@ -1,4 +1,4 @@
-class attis::install_maven ( $stage ='main',$install_user='',$install_group='')
+class attis::install_maven ( $stage ='main',$install_user='',$install_group='',$nexus_repo_name)
 inherits attis
 {
 #

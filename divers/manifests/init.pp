@@ -22,6 +22,11 @@ inherits  divers::params
 		require=> File['config_dir'],
 #		schedule=> 'sch_once_daily',
 	}
+	file {'/CONFIG/objectdb':
+		ensure=> directory,
+                owner=>puppet,
+                group=> puppet,
+	}
 #	notify{"facts_test":
 #	message=> "$facts",
 #	}
