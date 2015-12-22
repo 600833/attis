@@ -35,40 +35,18 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class lvm2::fs ($stage='main', $fs_list, $ismount) {
+class lvm2 ($stage='main', $fs_list) {
  if ! is_array($fs_list) {
   fail("${fs_list} is not array type")
  }
- $fs_list1=array_sort($fs_list,'(\A.+?)[\s,;]+')
- $fs_list1.each |$fs| {
+ $fs_list.each |$fs| {
   $vec=itemize2array($fs)
-  $mnt_point=$vec[0]
+  $mnt_point=$vec[0] 
   $mnt_device=$vec[1]
   $taille=$vec[2]
   if empty($taille) { fail("taille du fs n'est pas renseigné") }
   if empty($mnt_point) { fail("point de montage du fs n'est pas renseigné") }
   if empty($mnt_device) { fail("volume logique du fs n'est pas renseigné") }
-  filesystem {"$mnt_point":
-   ensure=> present,
-   device=>"${mnt_device}",
-   size=> "${taille}",
-   fstype=> 'ext4',
-#   owner=> 0,
-#   group=> 0,
-   owner=> $install_user,
-   group=> $install_group,
-   mode=> '755',
-   mnt_options=> 'rw',
-   mount=> $ismount,
-#   notify=>Mount[$mnt_point],
-  }
-#  mount {"${mnt_point}":
-#   ensure=> 'mounted',
-#   device=> "${mnt_device}",
-#   fstype=> 'ext4',
-#   options => 'defaults',
-#   pass => '2',
-#   target=> '/etc/fstab',
-#  }
+  notify{"creation du fs : ${mnt_device} ${mnt_device} ${taille}": }
  }
 }
