@@ -76,7 +76,7 @@ begin
   desc "Taille du volume exemple: 10M , ou 1G"
   validate {|v|
    v1=v.gsub(/\s+/,'')
-   raise ArgumentError,"size is not valid #{v}" unless v =~ /^(\d+)\.?(\d+)[BKMG]{1}$/i
+   raise ArgumentError,"size is not valid #{v}" unless v =~ /^(\d+)\.?(\d+)?[BKMG]{1}$/i
   }
 =begin
   unts={'B'=>1,'K'=>1024,'M'=>1048576,'G'=>1073741824}
