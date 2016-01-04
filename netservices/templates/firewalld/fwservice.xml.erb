@@ -3,7 +3,22 @@
 <service>
   <short><%= @sv %></short>
   <description>service definition for <%= @sv %></description>
-<% @fwservices2[@sv].each { |v|  -%>
+<% unless @fwservices2[@sv].nil? then
+  @fwservices2[@sv].each { |v|
+-%>
   <port protocol="<%= v['proto'] %>" port="<%= v['port'] %>"/>
-<% } -%>
+<% }
+   else
+    lst=File.read("/etc/services").scan(/^#{@sv}\s+([\S]+)\/(udp|tcp)/i)
+    unless lst.nil?
+	lst.each { |z|
+		prt=z[0]
+		proto=z[1]
+%>
+  <port protocol="<%= proto %>" port="<%= prt %>"/>
+<%
+	}
+    end
+   end
+-%>
 </service>

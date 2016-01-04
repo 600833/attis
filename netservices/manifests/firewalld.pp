@@ -60,7 +60,7 @@ class netservices::firewalld ($stage = 'main', $service_ensure = 'running' ) {
   $ar_fwd_adm = split($fwd_adm,";")
   $ar_fwd_prod = split($fwd_prod,";")
   $ar_fwd_prod.each |$sv| {
-     if $fwservices[$sv] == undef {
+     if ( $fwservices[$sv] == undef and $sv !~ /^port=/ ) {
      file { "${services_dir}/${sv}.xml":
 	ensure  => present,
         owner   => root,
@@ -72,7 +72,7 @@ class netservices::firewalld ($stage = 'main', $service_ensure = 'running' ) {
     }
   }
   $ar_fwd_adm.each |$sv| {
-     if $fwservices[$sv] == undef {
+     if ( $fwservices[$sv] == undef and  $sv !~ /^port=/ ) {
      file { "${services_dir}/${sv}.xml":
 	ensure  => present,
         owner   => root,

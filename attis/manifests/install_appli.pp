@@ -61,6 +61,14 @@ inherits attis
 			require=> File[$full_maven_download_tag],
 			creates=> $install_dir
 		}
+                if ( $fmt == 'rpm' ) {
+                  $install_user2 = 'root'
+                  $install_group2 = 'root' 
+                }
+                else {
+                  $install_user2 = $install_user
+                  $install_group2 = $install_group
+                }
                 exec {$install_cmd:
                         path=> $exec_path,
                         environment=> $exec_env,
@@ -70,8 +78,8 @@ inherits attis
                         cwd=> $install_dir,
                         require=> Exec[$install_dir],
 #                       notify=> File[$install_link],
-			user=> $install_user,
-			group=> $install_group,
+			user=> $install_user2,
+			group=> $install_group2,
                 }
 		file {$installation_tag:
 			ensure=> present,

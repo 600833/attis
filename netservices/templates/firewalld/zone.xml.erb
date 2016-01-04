@@ -24,16 +24,30 @@
    <interface name="<%= h[@zone] -%>" />
 <% if ( @zone == 'adm' ) then 
    @fwd_adm.split(';').each { |v|
+   unless v =~ /^port\s*=/ then
 -%>
    <service name="<%= v -%>"/>
 <%
+   else
+    z=v.match(/^port\s*=\s*(\S+)\/(udp|tcp)$/i)
+-%>
+   <port protocol="<%= z[2] %>" port="<%= z[1] %>"/>
+<%
+   end
 }
 end  
    if ( @zone == 'prod' ) then 
    @fwd_prod.split(';').each { |v|
+   unless v =~ /^port\s*=/ then
 -%>
    <service name="<%= v -%>"/>
 <%
+   else
+   z=v.match(/^port\s*=\s*(\S+)\/(udp|tcp)$/i)
+-%>
+   <port protocol="<%= z[2] %>" port="<%= z[1] %>"/>
+<%
+   end
 }
 end  -%>
 <% end -%>
