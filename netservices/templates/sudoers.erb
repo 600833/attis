@@ -110,6 +110,7 @@ w="adm";adm_grp_list=x1.collect { |v| w=w+"-"+v};
 %wheel	ALL=(ALL)	ALL
 <% adm_grp_list.each { |v| -%>
 %<%=v %>  ALL=(ALL)       ALL
+%loc-<%=v %>  ALL=(ALL)       ALL
 <% } -%>
 
 ## Same thing without a password

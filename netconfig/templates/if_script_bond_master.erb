@@ -1,0 +1,16 @@
+#<%= @template_header %>
+DEVICE=<%= @this_inter['identifier'] %>
+NAME=<%= @this_inter['identifier'] %>
+TYPE=<%= @this_inter['type'] %>
+BONDING_MASTER=yes
+<% if @this_inter['missing'].grep(/^no_subnet/).empty? == true -%>
+IPADDR=<%= @this_inter['ip'] %>
+NETMASK=<%= @this_inter['subnet']['mask'] %>
+<% end -%>
+ONBOOT=yes
+BOOTPROTO=none
+PEERDNS=no
+PEERROUTES=no
+NM_CONTROLLED=no
+USERCTL=no
+BONDING_OPTS="<%= @this_inter['bond_options'] %>"

@@ -72,24 +72,35 @@ Puppet::Type.type(:filesystem).provide(:linux_lvm2) do
   cur_gid= fstat1.gid
   cur_uid= fstat1.uid
   cur_mode= '0' + sprintf('%o',fstat1.mode)[-3,3]
-  tgt_owner = resource[:owner]
-  tgt_owner = tgt_owner.to_s if tgt_owner.is_a? Fixnum
-  tgt_owner =~ /^\d+$/ ? tgt_uid = tgt_owner : tgt_uid=Etc.getpwnam(tgt_owner).uid
-  tgt_group = resource[:group]
-  tgt_group = tgt_group.to_s if tgt_group.is_a? Fixnum
-  tgt_group =~ /^\d+$/ ? tgt_gid = tgt_group : tgt_gid=Etc.getgrnam(tgt_group).gid
+#
   tgt_mode = resource[:mode]
   unless cur_mode.to_i(8) == tgt_mode.to_i(8)
    FileUtils.chmod tgt_mode.to_i(8), resource[:mnt]
    puts "#{resource[:mnt]} has been changed from #{cur_mode} to mode #{tgt_mode}"
   end
-  unless tgt_uid == cur_uid
-   FileUtils.chown tgt_uid, nil, resource[:mnt]
-   puts "#{resource[:mnt]} has been changed to owner #{tgt_owner}"
+#
+  tgt_owner = resource[:owner]
+  unless  tgt_owner.is_a? String and tgt_owner.empty?
+   tgt_owner = tgt_owner.to_s if tgt_owner.is_a? Fixnum
+   tgt_owner =~ /^\d+$/ ? tgt_uid = tgt_owner : tgt_uid=Etc.getpwnam(tgt_owner).uid
+   unless tgt_uid == cur_uid
+    FileUtils.chown tgt_uid, nil, resource[:mnt]
+    puts "#{resource[:mnt]} has been changed to owner #{tgt_owner}"
+   end
+  else
+   puts "filesystem user isn't fixed"
   end
-  unless tgt_gid == cur_gid
-   FileUtils.chown nil, tgt_gid, resource[:mnt]
-   puts "#{resource[:mnt]} has been changed to group #{tgt_group}"
+#
+  tgt_group = resource[:group]
+  unless  tgt_group.is_a? String and tgt_group.empty?
+   tgt_group = tgt_group.to_s if tgt_group.is_a? Fixnum
+   tgt_group =~ /^\d+$/ ? tgt_gid = tgt_group : tgt_gid=Etc.getgrnam(tgt_group).gid
+   unless tgt_gid == cur_gid
+    FileUtils.chown nil, tgt_gid, resource[:mnt]
+    puts "#{resource[:mnt]} has been changed to group #{tgt_group}"
+   end
+  else
+   puts "filesystem group isn't fixed"
   end
  end
  def mount_me(mount_state_requested)

@@ -1,0 +1,33 @@
+class netconfig::config_ip ( $stage='main') {
+ $x=foreman_netconfig('list')
+ notify{"val: ${x}":}
+ $bond_interfaces = $foreman_interfaces.filter |$interf| { $interf["type"] == "Bond" and $interf["identifier"] == "bond0" }
+ if ($bond_interfaces.count == 1)
+ {
+  notify{"unique bond0 $bond_interfaces":}
+  $bond_interfaces2 = $bond_interfaces
+ }
+ else
+ {
+  notify{"not unique bond0 start selection according to attrs ${bond_interfaces}":}
+  $bond_interfaces2= $bond_interfaces.filter |$interf| { $interf["attrs"].empty }
+ }
+ if ($bond_interfaces2.count == 1)
+ {
+  notify{"inter2 ${bond_interfaces2}":}
+  file {'/etc/sysconfig/network-scripts/ifcfg-bond0':
+   ensure=> present,
+   owner=>0,
+   group=>0,
+   content=>template('netconfig/ifcfg-bond0.erb'),
+   notify=>Service['network.service'], 
+  }
+  service {'network.service':
+   ensure=> 'running',
+  }
+ }
+ else
+ {
+  fail("fail... ${bond_interfaces2} not unique")
+ }
+}

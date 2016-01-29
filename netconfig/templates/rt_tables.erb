@@ -10,8 +10,18 @@
 # local
 #
 #1      inr.ruhep
-<%-  
-i=10
-@f1.each { |v| -%>
-<%= i %> <%= v["identifier"] %>
-<%-  i+=10 } -%>
+<% 
+if defined? @rt_table_plus and @rt_table_plus.nil? == false 
+ if @rt_table_plus.is_a? Array 
+  @rt_table_plus.each do |v|
+-%>
+<%= v %>
+<% 
+  end
+ else 
+-%>
+<%= @rt_table_plus %>
+<%
+ end
+end 
+-%>

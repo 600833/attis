@@ -1,0 +1,17 @@
+#<%= @template_header %>
+DEVICE=<%= @this_inter['identifier'] %>
+NAME=<%= @this_inter['identifier'] %>
+<% if @this_inter['missing'].grep(/(no_subnet|no_ip)/).empty? -%>
+IPADDR=<%= @this_inter['ip'] %>
+NETMASK=<%= @this_inter['subnet']['mask'] %>
+<% end -%>
+HWADDR=<%= @this_inter['mac'] %>
+ONBOOT=yes
+PEERDNS=no
+PEERROUTES=no
+NM_CONTROLLED=no
+BOOTPROTO=none
+USERCTL=no
+<% if @this_inter['classe'] == 'vlan' -%>
+VLAN=yes
+<% end -%>

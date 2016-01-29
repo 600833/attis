@@ -1,0 +1,15 @@
+#<%= @template_header %>
+<%
+i=this_inter['maitre_index']
+maitre_identifier=@interface_attrs[i]['identifier']
+-%>
+DEVICE=<%= @this_inter['identifier'] %>
+MASTER=<%= maitre_identifier %>
+NAME=<%= @this_inter['identifier'] %>
+SLAVE=yes
+USERCTL=no
+BOOTPROTO=none
+ONBOOT=yes
+PEERDNS=no
+PEERROUTES=no
+NM_CONTROLLED=no

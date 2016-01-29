@@ -54,11 +54,13 @@
 # Allow root anywhere
 + : root : ALL
 + : unixadmin : ALL
++ : local_unixadmin : ALL
 <%
 x1=@hostgroup.split("/")
 w="adm";adm_grp_list=x1.collect { |v| w=w+"-"+v};
 -%>
 <% adm_grp_list.each { |v| -%>
++ : loc-<%= v %> : ALL
 + : <%= v %> : ALL
 <% } -%>
 #

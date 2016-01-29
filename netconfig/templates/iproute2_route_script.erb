@@ -1,0 +1,7 @@
+#<%= @template_header %>
+<% if  @this_inter['missing'].grep(/no_gateway/).empty? -%>
+default via <%= @this_inter['subnet']['gateway'] %> dev <%= @this_inter['identifier'] %> table <%= @iproute2_route_table %>
+<% if @this_inter['primary'] -%>
+default via <%= @this_inter['subnet']['gateway'] %> dev <%= @this_inter['identifier'] %>
+<% end -%>
+<% end -%>

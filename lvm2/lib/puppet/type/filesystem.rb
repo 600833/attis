@@ -22,6 +22,7 @@ begin
   newvalue(:false)
  end
  newparam(:owner) do
+  desc "#### owner du point de montage"
 =begin
   desc "#### owner du point de montage"
   puts "you are in newparam owner"
@@ -29,15 +30,14 @@ begin
   puts "___________"
 =end
   
-  validate { |v|
 =begin
+  validate { |v|
    puts "#### you are in newparam validate owner"
    puts self 
    puts self.class
    puts self.methods.inspect
    puts self.private_methods.inspect
    puts "___________"
-=end
    unless v.is_a? Fixnum 
     if not ( v =~ /^\w+$/ )
      raise ArgumentError,"owner isn't valid #{v}"
@@ -47,9 +47,11 @@ begin
     z=Etc.getpwuid(v)
    end
   }
+=end
  end
  newparam(:group) do
   desc "groupe proprietaire du point de montage"
+=begin
   validate { |v|
    unless v.is_a? Fixnum
     if not ( v =~ /^\w+$/ )
@@ -60,6 +62,7 @@ begin
     z=Etc.getgrgid(v)
    end
   } 
+=end
  end
  newparam(:mode) do
   desc "mode du point de montage"
