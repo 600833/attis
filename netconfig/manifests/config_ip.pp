@@ -1,4 +1,4 @@
-class netconfig::config_ip ( $stage='main') {
+class netconfig::config_ip ( $stage='main',$use_rt_tables=true,$host_routes={}) {
  $if_script_dir='/etc/sysconfig/network-scripts'
  $interface_attrs=foreman_netconfig('list')
  notify{"interface_attrs": 
@@ -6,7 +6,7 @@ class netconfig::config_ip ( $stage='main') {
  }
  $dbg=""
  $interface_attrs.each | $this_inter | {
-  if $this_inter['type'] == "Bond" and $this_inter['critic']=="no" {
+  if ( $this_inter['type'] == "Bond" and  ($this_inter['critic']=="no" or ($this_inter['critic']=="yes" and grep($this_inter['missing'],"no_macaddress")))) {
    $if_script="ifcfg-${this_inter['identifier']}"
    file {"$if_script_dir/${dbg}${if_script}":
     ensure=>present,
@@ -22,13 +22,22 @@ class netconfig::config_ip ( $stage='main') {
     $iproute2_route_table="table_${this_inter['identifier']}"
     $iproute2_route_table_index="${$this_inter['rt_index']+5100}"
     sauver('rt_table',"${iproute2_route_table_index} ${iproute2_route_table}")
-    file {"$if_script_dir/${dbg}${iproute2_rule_script}":
-     ensure=> present,
-     owner=> 0,
-     group=> 0,
-     mode=> '644',
-     content=> template("$module_name/iproute2_rule_script.erb"),
-     notify=> Exec['ShutDownNetworkManager'],
+    if $use_rt_tables {
+     file {"$if_script_dir/${dbg}${iproute2_rule_script}":
+      ensure=> present,
+      owner=> 0,
+      group=> 0,
+      mode=> '644',
+      content=> template("$module_name/iproute2_rule_script.erb"),
+      notify=> Exec['ShutDownNetworkManager'],
+     }
+    } 
+    else
+    {
+     file {"$if_script_dir/${dbg}${iproute2_rule_script}":
+      ensure=> absent,
+      notify=> Exec['ShutDownNetworkManager'],
+     }
     }
     file {"$if_script_dir/${dbg}${iproute2_route_script}":
      ensure=> present,
@@ -67,13 +76,21 @@ class netconfig::config_ip ( $stage='main') {
     $iproute2_route_table="table_${this_inter['identifier']}"
     $iproute2_route_table_index="${$this_inter['rt_index']+5100}"
     sauver('rt_table',"${iproute2_route_table_index} ${iproute2_route_table}")
-    file {"$if_script_dir/${dbg}${iproute2_rule_script}":
-     ensure=> present,
-     owner=> 0,
-     group=> 0,
-     mode=> '644',
-     content=> template("$module_name/iproute2_rule_script.erb"),
-     notify=> Exec['ShutDownNetworkManager'],
+    if $use_rt_tables  {
+     file {"$if_script_dir/${dbg}${iproute2_rule_script}":
+      ensure=> present,
+      owner=> 0,
+      group=> 0,
+      mode=> '644',
+      content=> template("$module_name/iproute2_rule_script.erb"),
+      notify=> Exec['ShutDownNetworkManager'],
+     }
+    }
+    else
+    {
+     file {"$if_script_dir/${dbg}${iproute2_rule_script}":
+      ensure=> absent,
+     }
     }
     file {"$if_script_dir/${dbg}${iproute2_route_script}":
      ensure=> present,

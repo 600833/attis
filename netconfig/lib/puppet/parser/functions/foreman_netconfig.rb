@@ -15,6 +15,9 @@ module Puppet::Parser::Functions
    puts '========================================='
    unless defined? @foreman_interfaces
     @foreman_interfaces||=lookupvar('foreman_interfaces')
+    @foreman_interfaces.each_with_index do | val,ix|
+      @foreman_interfaces.delete_at(ix) if val['type']=='BMC'
+    end
     @facts||=lookupvar('facts')
 #
 # complete macaddress or identifier
@@ -27,7 +30,7 @@ module Puppet::Parser::Functions
        idf=v['identifier'].gsub(/\./,'_')
        cle='macaddress_' + idf
        v['mac']=@facts[cle]
-       raise "Network interface with identifier #{idf} has no macaddress" if v['mac'].nil? or v['mac'].empty?
+       raise "Network interface with identifier #{idf} has no macaddress" if (v['mac'].nil? or v['mac'].empty?) and v['type'] != 'Bond'
        puts "identifier #{idf} has macaddress #{v['mac']}"
       end
 #
@@ -102,6 +105,17 @@ module Puppet::Parser::Functions
     end 
     @foreman_interfaces.each_with_index do |v,i|
      if v['type'].upcase == 'BOND'
+      case v['mode'] 
+       when 'balance-rr' then v['bond_options']="mode=0 #{v['bond_options']}"
+       when 'active-backup' then v['bond_options']="mode=1 #{v['bond_options']}"
+       when 'balance-xor' then v['bond_options']="mode=2 #{v['bond_options']}"
+       when 'broadcast' then v['bond_options']="mode=3 #{v['bond_options']}"
+       when '802.3ad' then v['bond_options']="mode=4 #{v['bond_options']}"
+       when 'balance-tlb' then v['bond_options']="mode=5 #{v['bond_options']}"
+       when 'balance-alb' then v['bond_options']="mode=6 #{v['bond_options']}"
+       else v['bond_options']="mode=0 #{v['bond_options']}"
+      end
+#
       v['classe']='aggregate'
       if not (v['attached_devices'].nil? ) and not(v['attached_devices'].empty?)
        v['attached_devices'].split(/[\s,;]+/).each do | w |

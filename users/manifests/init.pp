@@ -35,24 +35,24 @@
 #
 # Copyright 2016 Your name here, unless otherwise noted.
 #
-class users ($stage='main', $user_lst=[], $group_lst=[]) {
- unless is_array($user_lst) {
-  fail("${user_lst} is not array type")
+class users ($stage='main',$grplist={},$userlist={}) {
+ unless is_hash($userlist) {
+  fail("${userlist} is not hash type")
  }
 
- unless is_array($group_lst) {
-  fail("${group_lst} is not array type")
+ unless is_hash($grplist) {
+  fail("${grp_list} is not hash type")
  }
  
-# notify {"user_list": message=>"${user_lst}"}
-# notify {"group_list": message=>"${group_lst}"}
+# notify {"userlist": message=>"${userlist}"}
+# notify {"grplist": message=>"${grp_list}"}
 #
 #create group
 #
- $group_lst.each |$v| {
+ $grplist.each |$k,$v| {
   $v1=split($v,':')
   $etat=strip($v1[0])
-  $nom=strip($v1[1])
+  $nom=strip($k)
   $id_group=strip($v1[3])
   group {$nom:
    ensure=> $etat,
@@ -62,11 +62,17 @@ class users ($stage='main', $user_lst=[], $group_lst=[]) {
 #
 #create private group and user
 #
- $user_lst.each |$v| {
+ $userlist.each |$k,$v| {
   $v1=split($v,':')
   $etat=strip($v1[0])
-  $nom=strip($v1[1])
-  $mdp=strip($v1[2])
+  $nom=strip($k)
+  $tmp_mdp=strip($v1[2])
+  if $tmp_mdp =~ /^\$[0-9]\$/ {
+   $mdp=$tmp_mdp
+  }
+  else {
+   $mdp=pw_hash($tmp_mdp,"SHA-256","puppet")
+  }
   $id_user=strip($v1[3])
   $id_group=strip($v1[4])
   $desc=strip($v1[5])

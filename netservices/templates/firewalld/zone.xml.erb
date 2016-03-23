@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- <%= @template_header %> -->
-<% if @zone =~ /untrusted/ then -%>
-<zone target="%%REJECT%%">
-<% else -%>
 <zone>
-<% end -%>
   <short><%= @projet_prefix %>_<%= @zone %> </short>
   <description>zone definition file</description>
+   <interface name="<%= @zone %>" />
 <% 
-    h=Hash.new()
-    @foreman_interfaces.each { |v|
-	s=v['name']
-	s1=s.sub(Regexp.new(Regexp.escape(@ad_domain)),'')
-	if ( s1 =~ /\.adm/) then 
-		h['adm']= v['identifier']
-        end 		
-        if (s1 !~ /\.adm/) then
-                h['prod']= v['identifier']
-        end 
-    }  
--%>
-<% if (@zone !~ /untrusted/) then -%>
-   <interface name="<%= h[@zone] -%>" />
-<% if ( @zone == 'adm' ) then 
-   @fwd_adm.split(';').each { |v|
+   @fwd_srv.split(/[\s;,]+/).uniq.each { |v|
    unless v =~ /^port\s*=/ then
 -%>
    <service name="<%= v -%>"/>
@@ -35,20 +17,5 @@
 <%
    end
 }
-end  
-   if ( @zone == 'prod' ) then 
-   @fwd_prod.split(';').each { |v|
-   unless v =~ /^port\s*=/ then
 -%>
-   <service name="<%= v -%>"/>
-<%
-   else
-   z=v.match(/^port\s*=\s*(\S+)\/(udp|tcp)$/i)
--%>
-   <port protocol="<%= z[2] %>" port="<%= z[1] %>"/>
-<%
-   end
-}
-end  -%>
-<% end -%>
 </zone>

@@ -1,7 +1,32 @@
 #<%= @template_header %>
-<% if  @this_inter['missing'].grep(/no_gateway/).empty? -%>
+<% if  @this_inter['missing'].grep(/no_gateway/).empty? 
+    if @use_rt_tables then
+-%>
 default via <%= @this_inter['subnet']['gateway'] %> dev <%= @this_inter['identifier'] %> table <%= @iproute2_route_table %>
-<% if @this_inter['primary'] -%>
+
+<% end
+   if @this_inter['primary'] -%>
 default via <%= @this_inter['subnet']['gateway'] %> dev <%= @this_inter['identifier'] %>
 <% end -%>
 <% end -%>
+#Admin/provision, hostgroup parameter : adm_routes
+<% if @this_inter['provision'] 
+    if defined? @adm_routes and not (@adm_routes.empty? )
+     @adm_routes.split(/[\s,;]+/).each do |el|
+-%>
+     <%= el %> via <%= @this_inter['subnet']['gateway'] %>
+<% 
+     end
+    end
+   end  
+-%>
+#class smart variable host_routes: host or net route per interfaces
+<% 
+   if @host_routes[@this_inter['identifier']].nil? == false and @host_routes[@this_inter['identifier']].empty? == false
+    @host_routes[@this_inter['identifier']].split(/[\s,;]+/).each do |el|
+-%>
+    <%= el %> via <%= @this_inter['subnet']['gateway'] %>
+<%- 
+    end
+   end 
+-%>
