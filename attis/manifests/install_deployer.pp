@@ -8,6 +8,7 @@ inherits attis
 	$exec_env="JAVA_HOME=${java_home}"
 	$puppet_dir='/app/puppet'
 	$deployer1=split($deployer_list,'[\,\;]')
+        if is_file_on_puppetmaster($mbin) == true {
 	$inlist1 = $deployer1.reduce([]) |$somme,$dpl| {
 		$a1=split($dpl,':')
 		$deployer_name=strip($a1[0])
@@ -28,7 +29,6 @@ inherits attis
 		$link_create_cmd=$tsub[9]
 		$installation_tag="${conf_dir}/${groupid}_${artifact}_${vers}.installed"
 		$exec_link_create="exec_link_${groupid}_${artifact}_${vers}"
-		notice($tsub)
 		exec {$install_dir:
 			path=> $exec_path,
                        	command=> "mkdir -p ${install_dir}",
@@ -68,5 +68,6 @@ inherits attis
 			refreshonly=> true,
 			logoutput=> true,
 		}
+        }
         }
 }

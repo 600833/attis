@@ -101,7 +101,7 @@ begin
  newproperty(:device) do
   desc "Fichier special du volume logique example: /dev/datavg/lv_tomcat_data"
   validate { |v|
-   raise ArgumentError,"device file is not valid #{v}" unless v =~ /^\/dev\/\w+\/\w+$/
+   raise ArgumentError,"device file is not valid #{v}" unless v =~ /^\/dev\/[\w\.\-]+\/[\w\-\.]+$/
   }
  end
 rescue Exception=>ex

@@ -6,6 +6,16 @@ inherits attis
 	$mbin=$param['maven']['maven_bin_path']
 	$exec_path="/usr/sbin:/usr/bin:/bin:${mbin}"
 	$exec_env="JAVA_HOME=${java_home}"
+        if defined('$subsystem_id') {
+         $tsystem_name=$subsystem_id
+        }
+        if defined('$subsystem_binary_version') {
+         $tsystem_version=$subsystem_binary_version
+        }
+        if defined('$subsystem_services_list') {
+         $tsubsystem_name=$subsystem_services_list 
+        }
+        
 #	$install_list=tsubsys_list($tsystem_name,$tsystem_version,$tsubsystem_name)
 #	$x1=tsubsys_list($tsystem_name,$tsystem_version,$tsubsystem_name)
 #	$install_list=$x1[0]

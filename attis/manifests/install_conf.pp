@@ -8,10 +8,11 @@ inherits attis
 	$exec_env="JAVA_HOME=${java_home}"
 	$puppet_dir='/app/puppet'
 	$conf1=split($conf_list,'[\,\;]')
+        if is_file_on_puppetmaster($mbin) == true {
 	$conf1.each |$dpl| {
 		$a1=split($dpl,':')
-		$conf_name=$a1[0]
-		$conf_version=$a1[1]
+		$conf_name=strip($a1[0])
+		$conf_version=strip($a1[1])
 		$install_list=conf_list($conf_name,$conf_version,$puppet_dir,$puppet_env)
         	$install_list.each |$tsub| {
 			$groupid=$tsub[0]
@@ -26,7 +27,7 @@ inherits attis
 			$hiera_link=$tsub[10]
 			$hiera_link_target=$tsub[11]
 			$installation_tag="${tag_dir}/${groupid}_${artifact}_${vers}.installed"
-			$install_dir_list=recursive_directories($install_dir,4,false)
+			$install_dir_list=recursive_directories($install_dir,2,false)
 			$install_dir_list.each |$dr| {
 				unless defined(File[$dr]) {
 					file {$dr:
@@ -57,8 +58,10 @@ inherits attis
 			unless  $artifact == 'nodes'  or $artifact == 'common'
 			{
 				$ik2=recursive_directories($install_link,1,false)
-				file {$ik2[count($ik2)-2]:
-					ensure=> directory,
+				unless defined(File[$ik2[count($ik2)-2]]) {
+					file {$ik2[count($ik2)-2]:
+						ensure=> directory,
+					}
 				}
                			file {$install_link:
                      			ensure=> link,
@@ -98,4 +101,5 @@ inherits attis
 			}}
         	}
 	}
+        }
 }

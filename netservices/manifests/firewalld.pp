@@ -13,6 +13,7 @@ class netservices::firewalld ($stage = 'main', $service_ensure = 'running',$zone
     $installed_zones = '/usr/lib/firewalld/zones'
     $unit_file = '/etc/systemd/system/firewalld.service' 
     $foreman_interfaces.each  |$v| {
+      notify{"interface $v":}
       if $v['provision'] {
        sauver("adm_nic",$v['identifier'])
       }
@@ -48,13 +49,20 @@ class netservices::firewalld ($stage = 'main', $service_ensure = 'running',$zone
     else {
      sauver($prod_nic,";$prod_list",add)
     }
-    $ent_list=restaurer("ent_list")
+    $ent_list_1=restaurer("ent_list")
+    if is_string($ent_list_1) {
+     $ent_list=[$ent_list_1]
+    }
+    else {
+     $ent_list=$ent_list_1
+    } 
+    notify {"ent_list $ent_list":}
 #    notify{"liste nic $ent_list":}
     $ent_list.each |$v| {
      $x=restaurer($v)
-#     notify {"ports de $v":message=>$x}
+     notify {"ports de $v":message=>$x}
     }
-
+#
   package { $package_name:
     ensure=> installed,
   }

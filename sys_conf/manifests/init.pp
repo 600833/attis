@@ -91,6 +91,28 @@ class sys_conf($stage="main",$conf_list={}) {
     }
    }
   }
+  elsif $f =~ /^\$.+/ {
+   $f1=regsubst($f,'^\$(.+)$','\1')
+   if (empty($bt) == false) and ($bt in 'bB') {
+    file {$ky:
+     ensure=> present,
+     owner=> $u,
+     group=> $g,
+     mode=> $m,
+     content=> getvar($f1),
+     notify=> Exec[$reboot]
+    }
+   }
+   else {
+    file {$ky:
+     ensure=> present,
+     owner=> $u,
+     group=> $g,
+     mode=> $m,
+     content=> getvar($f1),
+    }
+   }
+  }
   else {
    if (empty($bt) == false ) and ($bt in 'bB') {
     file {$ky:

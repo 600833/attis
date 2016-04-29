@@ -36,15 +36,15 @@
 # Copyright 2015 Your name here, unless otherwise noted.
 #
 class lvm2::fs ($stage='main', $fs_list, $ismount) {
- if ! is_array($fs_list) {
-  fail("${fs_list} is not array type")
+ if ! is_hash($fs_list) {
+  fail("${fs_list} is not hash type")
  }
- $fs_list1=array_sort($fs_list,'(\A.+?)[\s,;]+')
- $fs_list1.each |$fs| {
-  $vec=itemize2array($fs)
-  $mnt_point=$vec[0]
-  $mnt_device=$vec[1]
-  $taille=$vec[2]
+ $fs_list1=hash_sort_by_keys($fs_list)
+ $fs_list1.each |$k,$v| {
+  $vec=itemize2array($v)
+  $mnt_point=$k
+  $mnt_device=$vec[0]
+  $taille=$vec[1]
   if empty($taille) { fail("taille du fs n'est pas renseigné") }
   if empty($mnt_point) { fail("point de montage du fs n'est pas renseigné") }
   if empty($mnt_device) { fail("volume logique du fs n'est pas renseigné") }
