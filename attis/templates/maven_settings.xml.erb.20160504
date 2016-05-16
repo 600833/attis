@@ -1,15 +1,23 @@
+<%
+srv1=@param['maven']['nexus_server']
+-%>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
 <!-- <%= @template_header %> -->
 
-  <localRepository><%= @param['maven']['local_repo_dir'] %></localRepository>
+  <localRepository>/data/maven_repo</localRepository>
 
   <servers>
     <server>
-      <id><%= @param['maven']['repo_id'] %></id>
-      <username><%= @param['maven']['deploy_account'] %></username>
-      <password><%= @param['maven']['deploy_account_pwd'] %></password>
+      <id>nexus</id>
+      <username>deployment</username>
+      <password>deployment123</password>
+    </server>
+    <server>
+      <id>releases</id>
+      <username>deployment</username>
+      <password>deployment123</password>
     </server>
   </servers>
 
@@ -21,15 +29,15 @@
       </activation>
       <repositories>
         <repository>
-          <id><%= @param['maven']['repo_id'] %></id>
-          <url>http://<%= @param['maven']['nexus_server'] %><%= @param['maven']['nexus_content_path'] %>/<%= @param['maven']['repo_id'] %></url>
+          <id>releases</id>
+          <url>http://<%= srv1 %>/nexus/content/repositories/<%= @nexus_repo_name %></url>
         </repository>
 
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id><%= @param['maven']['repo_id'] %></id>
-          <url>http://<%= @param['maven']['nexus_server'] %><%= @param['maven']['nexus_content_path'] %>/<%= @param['maven']['repo_id'] %></url>
+          <id>releases</id>
+          <url>http://<%= srv1 %>/nexus/content/repositories/<%= @nexus_repo_name %></url>
         </pluginRepository>
       </pluginRepositories>
     </profile>
