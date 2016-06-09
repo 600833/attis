@@ -6,4 +6,7 @@ class divers::test
 	}
 	$fwservices2=hiera("fwservices2")
 	notice ($fwservices2)
+	notify{'foreman_interfaces':
+		message=> "${foreman_interfaces}",
+	}
 }

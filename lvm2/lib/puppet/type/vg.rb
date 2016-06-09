@@ -11,7 +11,7 @@ begin
  newproperty(:disks, :array_matching => :all) do
   desc "disks=['/dev/sda','/dev/sdc']"
   validate { |v|
-   raise ArgumentError,"device file is not valid #{v}" unless v =~ /^\/dev\/sd[a-z,0-9]+$/
+   raise ArgumentError,"device file is not valid #{v}" unless v =~ /^\/dev\/[vs]d[a-z,0-9]+$/
   }
  end
 rescue Exception=>ex
