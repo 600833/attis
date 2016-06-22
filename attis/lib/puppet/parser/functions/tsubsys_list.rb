@@ -1,3 +1,6 @@
+#
+#get a list of binary artifacts to download for a given service or component of the subsystem
+#
 $LOAD_PATH<<File.dirname(__FILE__)
 require 'faunus'
 module Puppet::Parser::Functions

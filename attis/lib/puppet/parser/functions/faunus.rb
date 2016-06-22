@@ -1,16 +1,40 @@
 require 'tempfile'
+#
+#this module is designed to operate nexus repository by mvn command. It can analyze the artifact dependence.
+#main class is Faunus::Maven
+#
 module Faunus
+#
+#define specific exceptions to raise in this module
+#
   class Exc_maven_get_pom < Exception
   end
   class Exc_maven_list_dep < Exception
   end
   class Exc_maven_subsys_notfound < Exception
   end
+#
+# class Mavens represent a collection of subsystems. All operations on subsystem collection should be defined in this class
+#
   class Mavens
    attr_reader :deplist  
    def initialize(tsys,vers,artifact)
+#
+#Mavens object constructor
+#tsys: subsystem_id
+#vers: subsystem_version
+#artifact: list of servivces( separated by :,)
+
+# 
+#create an array of services
     artilist=itemize(artifact)
+#
+#get subsystem object for a given version
+#
     @obj_subsystem=Faunus::Maven.load(tsys,vers)
+#
+#get a list of dependencies 
+#
     @obj_subsystem.bin_dep_list
     @obj_collection=Array.new
     @deplist=Array.new()
@@ -26,6 +50,9 @@ module Faunus
      @deplist.flatten!(1).uniq!
      @client_cmd_list.flatten!(1).uniq!
    end
+#
+# transform a string seperated by ';,' on array
+#
    def itemize(x)
     raise "arg is not string" unless x.is_a? String
     y=x.chomp
@@ -33,7 +60,15 @@ module Faunus
     return y1
    end
   end
+#
+#class Maven represents a subsystem
+#
   class Maven
+#
+#load method read a serialized Maven object if a copy of the object exists in /CONFIG/objectdb
+#if not, a new Maven object is created by Faunus::Maven.new
+#
+#
    def self.load(tsys,vers,artifact: 'version-descriptor')
     basedir='/CONFIG/objectdb'
     objfile_path=basedir + '/' + tsys + vers + artifact + '.obj'
@@ -47,14 +82,26 @@ module Faunus
       return lobj
     end
    end 
+#
+# constructor of Maven object
+#
+#tsys: subsystem_id
+#vers: subsystem version
+#artifact: service(artifact)
+#
+#
    def initialize (tsys,vers,artifact: 'version-descriptor')
+#
+# put process environment for debugging
+# set initial parameters
+#
     puts '%%%000'
     puts 'Object constant'
     puts Object.constants.inspect
     puts "Process ID"
-    x101=Process.pid
-    puts x101
-    puts  %x( pstree -sp #{x101})
+    puppet_procid=Process.pid
+    puts puppet_procid
+    puts  %x( pstree -sp #{puppet_procid})
     puts 'environment variables:  '
 #    puts ENV.each { | name,value| puts name.inspect + "=" + value.inspect}
     puts  "self=" + self.inspect
@@ -74,15 +121,24 @@ module Faunus
     @deployer_dir='/app/puppet/install' 
     @conf_install_dir='/data/puppet/install'
     @hiera_dir='/data/puppet/hiera'
+#
+# using Tempfile to store pom.xml and dependence list
+#
     begin
      tf_sys_pom=Tempfile.new('tsys_pom')
      tf_sys_pom.close
      tf_sys_deplist=Tempfile.new('sys_deplist')
      tf_sys_deplist.close
+#
+#compose mvn command by multiple part
+#
      @cmd_get_p0=cmd_p1 + "get" + " -Dartifact=" + groupid + ':' + artifact + ':' +  vers + ':'
      @cmd_get_p1=cmd_p1 + "get" + " -Dartifact=" + groupid + ':' + artifact + ':' +  vers + ':' + 'pom' + ' -U' + ' -Ddest='
      @cmd_get=@cmd_get_p1 + tf_sys_pom.path
      runcmd = IO.popen(@envcmd,@cmd_get)
+#
+#run maven get pom
+#
      puts ""
      puts "%%% get pom" 
      puts runcmd.readlines
@@ -102,6 +158,9 @@ module Faunus
      defined? tf_sys_deplist and tf_sys_deplist.is_a? Tempfile and tf_sys_deplist.unlink
     end
    end
+#
+# get a list of artifacts with artifact and its requisite artifacts
+#
    def bin_dep_list(myline: [])
     @deplist=@deplist_1.map do |v|
      src=@mave_repo_base + '/' + v[0].gsub('.','/') + '/' + v[1] + '/' + v[3] + '/' + v[1] + '-' + v[3] + '.' + v[2]
@@ -134,6 +193,9 @@ module Faunus
 #   @deplist.each { |v| puts v.inspect }
    end
 
+#
+# get deployer dependance list
+#
    def deployer_dep_list(conf_dir,puppet_env)
      
     @deplist=@deplist_1.select { |v| v[2] == 'zip' }.map do |v|
@@ -149,7 +211,9 @@ module Faunus
     end
     @deplist.each { |v| puts v.inspect }
    end
-
+#
+# get a list of conf to install
+#
    def conf_dep_list(conf_dir,puppet_env)
      
     @deplist=@deplist_1.select { |v| v[2] == 'zip' }.map do |v|
@@ -176,18 +240,27 @@ module Faunus
     end
     @deplist.each { |v| puts v.inspect }
    end
-
+#
+#set maven command
+#
    def cmd_get
     @cmd_get
    end
-
+#
+# get maven command line 
+#
    def cmd_list
     @cmd_list
    end 
-
+#
+#display  a list of dependences
+#
    def deplist
     @deplist
    end
+#
+# get part one of maven command
+#
 
    def get_cmd_p1
     @cmd_get_p1
@@ -202,7 +275,9 @@ module Faunus
      @client_cmd_list << {'cmd'=>%Q(#{@cmd_get_p0}#{artifact_type}), 'flag'=>%Q(#{fl1}.#{artifact_type}.mvn.dld)}
      @client_cmd_list
    end
-
+#
+# get the version number of a service 
+#
    def get_version(tsubsystem)
     ver1=''
     ligne=[]
@@ -211,6 +286,9 @@ module Faunus
     return ligne,ver1
    end
   end
+#
+#in a  2-D array, elimite duplicate key. Here key is at position pos
+#
  def uniquebyentry(vec,pos)
   tags= Array.new(vec.length) {|v| v=0}
   vec.each_with_index do |v1,ix|
@@ -226,6 +304,12 @@ module Faunus
   vec.each_with_index { |v1,ix| vec1<<v1 if tags[ix] !=1 }
   return vec1
  end
+#
+#
+#itemize path of a file or directory, starting at position "start_at"
+#if you want to keep last item which could be a regular file, set drop_last=true
+#
+#
  def recursive_directories(pth,start_at,drop_last)
   z=''
   c=File.expand_path(pth).split(/\//).drop(1).collect { |itm| z = z + '/' + itm }

@@ -1,3 +1,6 @@
+#
+#get a list of binary artifacts to download or to install according to oper code
+#
 $LOAD_PATH<<File.dirname(__FILE__)
 require 'faunus'
 module Puppet::Parser::Functions

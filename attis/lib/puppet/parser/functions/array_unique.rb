@@ -1,3 +1,6 @@
+#
+#eliminate duplicate item of 2-D array according to a key value
+#
 $LOAD_PATH<<File.dirname(__FILE__)
 require 'faunus'
 module Puppet::Parser::Functions

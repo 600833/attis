@@ -1,3 +1,6 @@
+#
+#create directory tree array from a string
+#
 $LOAD_PATH<<File.dirname(__FILE__)
 require 'faunus'
 module Puppet::Parser::Functions

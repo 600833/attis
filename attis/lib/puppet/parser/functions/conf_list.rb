@@ -1,3 +1,6 @@
+#
+#get a list of artifacts conf for a given subsystem and version
+#
 $LOAD_PATH<<File.dirname(__FILE__)
 require 'faunus'
 module Puppet::Parser::Functions
